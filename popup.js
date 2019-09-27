@@ -30,18 +30,23 @@ const convertToCalendarUrl = (event) => {
         event.date.indexOf(",") + 2,
         event.date.length
     ).split(", ");
-    const [date, month, year] = fullDate.split(" ");
+    let [date, month, year] = fullDate.split(" ");
+    
+    if (date.length === 1) {
+        date = `0${date}`
+    }
+
     const formattedDate = `${year}${monthNumerals[month]}${date}`;
     const formattedTime = timeFormat24Hr(fullTime);
-    const url = `http://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${formattedDate}T${formattedTime}Z/${formattedDate}T${formattedTime}Z`
+    const url = `http://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${formattedDate}T${formattedTime}/${formattedDate}T${formattedTime}`
     return url;
 }
 
 const timeFormat24Hr = (time) => {
     const [timeItself, amOrPm] = time.split(" ");
     let [hr, min] = timeItself.split(":");
-    amOrPm === "PM" ?
-        hr = (parseInt(hr) + 12).toString() :
-        hr = hr;
+    if (amOrPm === "PM") {
+        hr = (parseInt(hr) + 12).toString() 
+    }
     return `${hr}${min}00`
 }

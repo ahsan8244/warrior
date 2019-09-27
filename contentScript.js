@@ -1,5 +1,10 @@
 window.onload = function() {
     try {
+        const heading = document.getElementById("region-main")
+            .getElementsByTagName("div")[0]
+            .getElementsByTagName("h2")[0]
+            .innerHTML;
+
         const statusTable = document.getElementsByClassName("generaltable")[0].children[0];
 
         if (statusTable) {
@@ -10,7 +15,7 @@ window.onload = function() {
                 {
                     method: "add", 
                     data: {
-                        title: "test",
+                        title: heading,
                         date: dueDate
                     }
                 }
@@ -18,7 +23,6 @@ window.onload = function() {
         }
     }
     catch (err) {
-        console.log(err);
         console.log("not an assignment");
     }
 }
