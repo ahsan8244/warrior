@@ -14,13 +14,34 @@ const monthNumerals = {
 }
 
 const dateList = document.getElementById("DueDates");
+const completedList = document.getElementById("completed");
 
 chrome.runtime.sendMessage({method: "get"}, (response) => {
     response.forEach((event) => {
         const newEvent = document.createElement("li");
         const url = convertToCalendarUrl(event);
-        newEvent.innerHTML = `<a href="${url}">${event.title}: ${event.date}</a>`
+        newEvent.innerHTML = `
+            <div>
+                <p>course name</p>
+                <p>${event.title}</p>
+                <p>${event.date}</p>
+                <a href="${url}" target="_blank">add to calendar</a>
+            </div>
+        `;
         dateList.appendChild(newEvent);
+    })
+});
+
+chrome.runtime.sendMessage({method: "getCompleted"}, (response) => {
+    response.forEach(event => {
+        const newEvent = document.createElement("li");
+        newEvent.innerHTML = `
+            <div>
+                <p>course name</p>
+                <p>${event.title}</p>
+            </div>
+        `;
+        completedList.appendChild(newEvent);
     })
 });
 
