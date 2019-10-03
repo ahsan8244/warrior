@@ -1,4 +1,5 @@
-let events = [];
+let due = [];
+let completed = [];
 
 chrome.runtime.onInstalled.addListener(function() {
     chrome.storage.sync.set({color: '#3aa757'}, function() {
@@ -18,18 +19,34 @@ chrome.runtime.onInstalled.addListener(function() {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.method === "add") {
         console.log(sender.url);
-        if (!itemExists(events, sender.url)) {
-            events = [
-                ...events,
+        if (!itemExists(due, sender.url)) {
+            due = [
+                ...due,
                 {
                     ...request.data,
                     url: sender.url
                 }
-            ]
+            ];
         }
     }
     else if (request.method === "get") {
-        sendResponse(events);
+        sendResponse(due);
+    }
+    else if (request.method === "completed") {
+        const assignmentId = sender.url;
+        due = due.filter(item => item.url !== assignmentId);
+        if (!itemExists(completed, assignmentId)) {
+            completed = [
+                ...completed,
+                {
+                    ...request.data,
+                    url: assignmentId
+                }
+            ];
+        }
+    }
+    else if (request.method === "getCompleted") {
+        sendResponse(completed);
     }
 })
 
@@ -40,5 +57,6 @@ const itemExists = (dataset, url) => {
             exists = true;
         }
     })
+    console.log(exists);
     return exists;
 }
