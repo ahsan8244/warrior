@@ -16,9 +16,11 @@
             "128": "images/get_started128.png"
         }
     },
-    "content_scripts": [{
-        "matches": ["https://moodle.hku.hk/*"],
-        "js": ["contentScript.js"]
-    }],
+    "content_scripts": [
+        {
+            "matches": ["https://moodle.hku.hk/*"],
+            "js": ["contentScript.js"]
+        }
+    ],
     "manifest_version": 2
   }
