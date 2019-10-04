@@ -17,32 +17,34 @@ const dateList = document.getElementById("DueDates");
 const completedList = document.getElementById("completed");
 
 chrome.runtime.sendMessage({method: "get"}, (response) => {
-    response.forEach((event) => {
-        const newEvent = document.createElement("li");
-        const url = convertToCalendarUrl(event);
-        newEvent.innerHTML = `
-            <div>
-                <p>course name</p>
-                <p>${event.title}</p>
-                <p>${event.date}</p>
-                <a href="${url}" target="_blank">add to calendar</a>
-            </div>
-        `;
-        dateList.appendChild(newEvent);
-    })
+    if (response.length === 0) {
+        const emptyLabel = document.createElement("p");
+        emptyLabel.setAttribute("class", "label");
+        emptyLabel.innerHTML = "nothing to show";
+        dateList.parentNode.insertBefore(emptyLabel, dateList);
+    }else {
+        response.forEach((event) => {
+            const newEvent = document.createElement("li");
+            const url = convertToCalendarUrl(event);
+            newEvent.innerHTML = dueCard(event.courseCode, event.title, event.date, url);
+            dateList.appendChild(newEvent);
+        });
+    }
 });
 
 chrome.runtime.sendMessage({method: "getCompleted"}, (response) => {
-    response.forEach(event => {
-        const newEvent = document.createElement("li");
-        newEvent.innerHTML = `
-            <div>
-                <p>course name</p>
-                <p>${event.title}</p>
-            </div>
-        `;
-        completedList.appendChild(newEvent);
-    })
+    if (response.length === 0) {
+        const emptyLabel = document.createElement("p");
+        emptyLabel.setAttribute("class", "label");
+        emptyLabel.innerHTML = "nothing to show";
+        completedList.parentNode.insertBefore(emptyLabel, completedList);
+    }else {
+        response.forEach(event => {
+            const newEvent = document.createElement("li");
+            newEvent.innerHTML = completedCard(event.courseCode, event.title);
+            completedList.appendChild(newEvent);
+        });
+    }
 });
 
 const convertToCalendarUrl = (event) => {
@@ -70,4 +72,24 @@ const timeFormat24Hr = (time) => {
         hr = (parseInt(hr) + 12).toString() 
     }
     return `${hr}${min}00`
+}
+
+const dueCard = (code, title, date, url) => {
+    return `
+        <div class="dueCard">
+            <p>${code}</p>
+            <p>${title}</p>
+            <p>${date}</p>
+            <a class="btn btn-primary" href="${url}" target="_blank">add to calendar</a>
+        </div>
+    `;
+}
+
+const completedCard = (code, title) => {
+    return `
+    <div class="completedCard">
+        <p>${code}</p>
+        <p>${title}</p>
+    </div>
+    `;
 }
