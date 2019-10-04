@@ -18,6 +18,8 @@ window.onload = function() {
                 dueDateElement = statusTable.children[2]
             }
 
+            const courseCode = document.getElementsByClassName("breadcrumb")[0].children[2].children[0].children[0]
+                .getAttribute("title");
             const submissionStatus = submissionStatusElement.children[1].innerHTML;
             const dueDate = dueDateElement.children[1].innerHTML;
 
@@ -26,6 +28,7 @@ window.onload = function() {
                     {
                         method: "completed",
                         data: {
+                            courseCode,
                             title: heading
                         }
                     }
@@ -35,6 +38,7 @@ window.onload = function() {
                     {
                         method: "add", 
                         data: {
+                            courseCode,
                             title: heading,
                             date: dueDate
                         }
