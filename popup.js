@@ -25,8 +25,16 @@ chrome.runtime.sendMessage({method: "get"}, (response) => {
     }else {
         response.forEach((event) => {
             const newEvent = document.createElement("li");
+
+            const dateAndTime = getDateAndTime(event);
+            const time = timeFormat24Hr(dateAndTime.fullTime);
+            const timeForTimer = `${time.substr(0, 2)}:${time.substr(2, 2)}:${time.substr(4, 2)}`;
+            const dateForTimer = `${monthNumerals[dateAndTime.month]}/${dateAndTime.date}/${dateAndTime.year} ${timeForTimer}`;
+            const startTimeInMs = new Date().getTime();
+            const endTimeInMs = new Date(dateForTimer).getTime();
+
             const url = convertToCalendarUrl(event);
-            newEvent.innerHTML = dueCard(event.courseCode, event.title, event.date, url);
+            newEvent.innerHTML = dueCard(event.courseCode, event.title, event.date, url, startTimeInMs, endTimeInMs);
             dateList.appendChild(newEvent);
         });
     }
@@ -47,8 +55,7 @@ chrome.runtime.sendMessage({method: "getCompleted"}, (response) => {
     }
 });
 
-const convertToCalendarUrl = (event) => {
-    const title = event.title;
+const getDateAndTime = (event) => {
     const [fullDate, fullTime] = event.date.slice(
         event.date.indexOf(",") + 2,
         event.date.length
@@ -58,9 +65,14 @@ const convertToCalendarUrl = (event) => {
     if (date.length === 1) {
         date = `0${date}`
     }
+    return {date, month, year, fullTime};
+}
 
-    const formattedDate = `${year}${monthNumerals[month]}${date}`;
-    const formattedTime = timeFormat24Hr(fullTime);
+const convertToCalendarUrl = (event) => {
+    const title = event.title;
+    const dateAndTime = getDateAndTime(event);
+    const formattedDate = `${dateAndTime.year}${monthNumerals[dateAndTime.month]}${dateAndTime.date}`;
+    const formattedTime = timeFormat24Hr(dateAndTime.fullTime);
     const url = `http://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${formattedDate}T${formattedTime}/${formattedDate}T${formattedTime}`
     return url;
 }
@@ -74,12 +86,15 @@ const timeFormat24Hr = (time) => {
     return `${hr}${min}00`
 }
 
-const dueCard = (code, title, date, url) => {
+const dueCard = (code, title, date, url, startTime, endTime) => {
     return `
         <div class="dueCard">
             <p>${code}</p>
             <p>${title}</p>
             <p>${date}</p>
+            <div class="progress">
+                <div id="pgbar" class="progress-bar" style="width: 0%" role="progressbar" aria-valuenow="0" aria-valuemin="${startTime}" aria-valuemax="${endTime}"></div>
+            </div>
             <a class="btn btn-primary" href="${url}" target="_blank">add to calendar</a>
         </div>
     `;
@@ -93,3 +108,21 @@ const completedCard = (code, title) => {
     </div>
     `;
 }
+
+const updateProgress = () => {
+    console.log("getting called");
+    const allProgressBars = document.getElementsByClassName("progress-bar");
+    
+    for (let bar of allProgressBars) {
+        //convert to minutes
+        const startTime = parseInt(bar.getAttribute("aria-valuemin")) / 1000 / 60;
+        const endTime = parseInt(bar.getAttribute("aria-valuemax")) / 1000 / 60;
+        const currentTime = new Date().getTime() / 1000 / 60;
+
+        const timeGap = endTime - startTime;
+        const barProgress = ((currentTime - startTime) / timeGap) * 100;
+        bar.setAttribute("style", `width: ${barProgress.toString()}%`);
+    }
+}
+
+setInterval(updateProgress, 1000);
