@@ -47,19 +47,6 @@ chrome.runtime.sendMessage({method: "getCompleted"}, (response) => {
     }
 });
 
-chrome.runtime.sendMessage({method: "getCompleted"}, (response) => {
-    response.forEach(event => {
-        const newEvent = document.createElement("li");
-        newEvent.innerHTML = `
-            <div>
-                <p>course name</p>
-                <p>${event.title}</p>
-            </div>
-        `;
-        completedList.appendChild(newEvent);
-    })
-});
-
 const convertToCalendarUrl = (event) => {
     const title = event.title;
     const [fullDate, fullTime] = event.date.slice(
