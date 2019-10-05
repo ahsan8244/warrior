@@ -34,12 +34,14 @@ window.onload = function() {
                     }
                 );
             }else {
+                const addedAt = new this.Date().getTime()
                 chrome.runtime.sendMessage(
                     {
                         method: "add", 
                         data: {
                             courseCode,
                             title: heading,
+                            addedAt,
                             date: dueDate
                         }
                     }

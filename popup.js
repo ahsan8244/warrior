@@ -30,11 +30,10 @@ chrome.runtime.sendMessage({method: "get"}, (response) => {
             const time = timeFormat24Hr(dateAndTime.fullTime);
             const timeForTimer = `${time.substr(0, 2)}:${time.substr(2, 2)}:${time.substr(4, 2)}`;
             const dateForTimer = `${monthNumerals[dateAndTime.month]}/${dateAndTime.date}/${dateAndTime.year} ${timeForTimer}`;
-            const startTimeInMs = new Date().getTime();
             const endTimeInMs = new Date(dateForTimer).getTime();
 
             const url = convertToCalendarUrl(event);
-            newEvent.innerHTML = dueCard(event.courseCode, event.title, event.date, url, startTimeInMs, endTimeInMs);
+            newEvent.innerHTML = dueCard(event.courseCode, event.title, event.date, url, event.addedAt, endTimeInMs);
             dateList.appendChild(newEvent);
         });
     }
@@ -118,6 +117,7 @@ const updateProgress = () => {
         const startTime = parseInt(bar.getAttribute("aria-valuemin")) / 1000 / 60;
         const endTime = parseInt(bar.getAttribute("aria-valuemax")) / 1000 / 60;
         const currentTime = new Date().getTime() / 1000 / 60;
+        console.log(currentTime);
 
         const timeGap = endTime - startTime;
         const barProgress = ((currentTime - startTime) / timeGap) * 100;
