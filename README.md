@@ -15,6 +15,6 @@ git clone <clone url>
 chrome://extensions
 ```
 
-3. Click on "Load unpacked", and add the project folder
+3. Turn on developer mode, click on "Load unpacked", and add the project folder
 
 4. You should be good to go
