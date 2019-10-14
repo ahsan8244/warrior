@@ -1,12 +1,25 @@
 body {
     font-size: 14px !important;
     min-width: 350px;
-    max-height: 450px;
-    margin: 8px;
+}
+
+#scrollView {
+    height: 500px;
+    overflow: scroll;
+    margin: 8px 8px 0 8px;
+}
+
+.addbtn {
+    border-radius: 0 !important;
+    width: 100%
 }
 
 .btn {
     font-size: 14px !important;
+}
+
+.heading {
+    margin-top: 8px;
 }
 
 h3 {

@@ -19,7 +19,7 @@
     "content_scripts": [
         {
             "matches": ["https://moodle.hku.hk/*"],
-            "js": ["contentScript.js"]
+            "js": ["utils.js", "contentScript.js"]
         }
     ],
     "manifest_version": 2
